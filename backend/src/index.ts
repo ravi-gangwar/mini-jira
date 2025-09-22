@@ -10,7 +10,7 @@ app.use(express.json());
 
 app.use("/api/v1", V1Router);
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, (err : any)=> {
     if (err) {
         console.log(err);

@@ -4,14 +4,16 @@ import z from "zod";
 
 
 const projectZod = z.object({
-    page: z.number(),
-    limit: z.number(),
+    page: z.string().optional().default("1").transform((val) => parseInt(val, 10)),
+    limit: z.string().optional().default("10").transform((val) => parseInt(val, 10)),
 })
 
 const getProjects = async (req: Request, res: Response) => {
     try {
-        const _id = req.userId;
-        const {page, limit} = projectZod.parse(req.params);
+        const _id = req.userId
+        console.log({_id, page: req.query.page, limit: req.query.limit});
+        const {page, limit} = projectZod.parse(req.query);
+        console.log({page, limit});
         const projects = await ProjectModel.find({userId: _id}).skip((page - 1) * limit).limit(limit);
 
         if(!projects){

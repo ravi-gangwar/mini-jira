@@ -1,4 +1,6 @@
-import { model, Model, models, Schema, type InferSchemaType } from "mongoose";
+import mongoose from "mongoose";
+import type { Model, InferSchemaType } from "mongoose";
+const { Schema, model, models } = mongoose;
 import { TaskPriority, TaskStatus } from "../../types/types.js";
 
 const TaskSchema = new Schema({

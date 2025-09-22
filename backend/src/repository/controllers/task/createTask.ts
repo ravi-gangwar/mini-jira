@@ -3,11 +3,15 @@ import { TaskPriority, TaskStatus } from "../../../types/types.js";
 import z, { ZodError } from "zod";
 import TaskModel from "../../../database/schema/TaskSchema.js";
 
+
 const taskZod = z.object({
     title: z.string().min(4),
     status: z.enum(TaskStatus),
     priority: z.enum(TaskPriority),
-    deadline: z.date(),
+    deadline: z.preprocess((val) => {
+        if (!val || val === "") return undefined;
+        return typeof val === "string" || val instanceof Date ? new Date(val) : val;
+    }, z.date().optional()),
     projectId: z.string(),
 })
 

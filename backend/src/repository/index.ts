@@ -3,10 +3,13 @@ import v1AuthRouter from "./services/auth.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import v1ProjectRouter from "./services/project.js";
 import v1TaskRouter from "./services/task.js";
+import v1UserRouter from "./services/user.js";
 
 const V1Router = Router();
 
 V1Router.use("/auth", v1AuthRouter);
+
+V1Router.use("/user", authMiddleware, v1UserRouter);
 
 V1Router.use("/project", authMiddleware, v1ProjectRouter);
 

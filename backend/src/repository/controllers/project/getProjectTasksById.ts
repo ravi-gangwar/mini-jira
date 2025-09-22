@@ -4,11 +4,14 @@ import TaskModel from "../../../database/schema/TaskSchema.js";
 import type { Request, Response } from "express";
 import { TaskPriority, TaskStatus } from "../../../types/types.js";
 
-const projectZod = z.object({
+const taskQueryZod = z.object({
     projectId: z.string(),
-    priority: z.enum(TaskPriority),
-    status: z.enum(TaskStatus),
-    deadline: z.date(),
+    priority: z.enum(TaskPriority).optional(),
+    status: z.enum(TaskStatus).optional(),
+    deadline: z.string().optional().transform((val) => {
+        if (!val || val === "") return undefined;
+        return new Date(val);
+    }),
 })
 
 const getProjectTasksById = async (req: Request, res: Response) => {
@@ -16,7 +19,7 @@ const getProjectTasksById = async (req: Request, res: Response) => {
         const userId = req.userId;
 
 
-        const {projectId, priority, status, deadline } = projectZod.parse(req.params);
+        const {projectId, priority, status, deadline } = taskQueryZod.parse(req.query);
 
         const project = await ProjectModel.findById(projectId);
 
@@ -28,7 +31,13 @@ const getProjectTasksById = async (req: Request, res: Response) => {
             return res.status(401).json({message: "Unauthorized", status: 401});
         }
 
-        let tasks = await TaskModel.find({projectId}).where("priority").equals(priority).where("status").equals(status).where("deadline").equals(deadline);
+        const filter: any = { projectId };
+        
+        if (priority) filter.priority = priority;
+        if (status) filter.status = status;
+        if (deadline) filter.deadline = deadline;
+
+        const tasks = await TaskModel.find(filter);
 
         if(!tasks){
             return res.status(400).json({message: "Tasks not found", status: 400});

@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import V1Router from "./v1/index.js";
+import V1Router from "./repository/index.js";
 import connectDB from "./database/connection.js";
 
 const app = express();

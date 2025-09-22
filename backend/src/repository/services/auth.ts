@@ -8,4 +8,5 @@ v1AuthRouter.post("/register", register);
 
 v1AuthRouter.post("/login", login);
 
+
 export default v1AuthRouter;
